@@ -23,9 +23,9 @@ class Rotulacao():
 		#Converte Imagem Object para Matriz
 		self.matriz = np.asarray(img.convert('L'))
 		#Dimensão M
-		self.m = np.size(self.matriz, 1)
+		self.m = np.size(self.matriz, 0)	
 		#Dimensão N
-		self.n = np.size(self.matriz, 0)
+		self.n = np.size(self.matriz, 1)
 		print("Linhas: {}\nColunas: {}\n".format(self.m, self.n))
 		print(self.matriz)
 
@@ -33,44 +33,83 @@ class Rotulacao():
 	Executar
 	'''
 	def executar(self):
-		saida = np.zeros([self.m,self.n])
-		m1 = np.size(saida, 1)
-		n1 = np.size(saida, 0)
+		m = np.zeros([self.m,self.n])
+		m1 = np.size(m, 0)
+		n1 = np.size(m, 1)
 		print("Linhas: {}\nColunas: {}\n".format(m1,n1))
 
 		#B&W
+		#Ternário em Python
+		m1 = self.m if self.m%2==0 else self.m-1
+		n1 = self.n if self.n%2==0 else self.n-1
+
 		for i in range(m1):
 			for j in range(n1):
 				if self.matriz[i][j] < 127:
-					saida[i][j] = 0
+					m[i][j] = 1
 				else:
-					saida[i][j] = 255
+					m[i][j] = 0
 
-		labels = []
+		print("Matriz B&W:")
+		print(m)
+		x = Image.fromarray(m)
+		#x.show()
+
+		labels = self.gerarLabels()
+		#print(labels)
 		label = 0
+		rotulos = np.chararray((m1, n1),unicode=True)
+
+		#print(rotulos)
+		for i in range(m1):
+			for j in range(n1):
+				rotulos[i][j] = str(m[i][j])
+
+		print(rotulos)
+
 		for i in range(m1):
 			for j in range(n1):
 				#p = self.matriz[i][j]
-				r = saida[i][j-1]
-				s = saida[i-1][j]
-
-				if i > 0 and saida[i][j] == 0:
-					pass
-				if saida[i][j] == 1:
-					if r == 0 and s == 0:
-						saida[i][j] = self.letters[label]
+				r = j-1
+				t = i-1
+				
+				if i == 0 and j == 0: #primeira linha, primeria coluna
+					if m[i][j] == 1:
+						rotulos[i][j] = labels[label]
 						label += 1
-					elif r == 1 or s == 1:
-						label.append(label)
-					elif r == 1 and s == 1:
-						pass
-					
-					
-		print(saida)
-		imagem = Image.fromarray(saida)
-		self.img.show()		
-		imagem.show()
+				elif i == 0 and m[i][j] == 1: # primeira linha, preto
+					if m[i][r] == 1:
+						rotulos[i][j] = labels[label-1]
+					else:
+						rotulos[i][j] = labels[label]
+						label += 1
+				elif m[i][j] == 1: #linha > 0, preto
+					if j == 0:
+						if m[t][j] == 1:
+							rotulos[i][j] = labels[label-1]
+						else:
+							rotulos[i][j] = labels[label]
+							label += 1
+					elif m[t][j] == 1 or m[i][r] == 1:
+						rotulos[i][j] = labels[label-1]
+					else:
+						rotulos[i][j] = labels[label]
+						label += 1
+
+		print("Matriz Rotulada:")
+
+		for i in range(len(rotulos)):
+			for j in range(len(rotulos[i])):
+				if rotulos[i][j] == '0':
+					print(" ", end='')
+				else:
+					print("{}".format(rotulos[i][j]), end='')
+			print("")
+
+		#print(rotulos)
+		#imagem = Image.fromarray(rotulos)
+		#self.img.show()		
+		#imagem.show()
 
 	def gerarLabels(self):
-		self.letters = "ABCDEFGHIJKLMNOPQRSTUVXYWZ"
-		print(self.letters[3])
+		return "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

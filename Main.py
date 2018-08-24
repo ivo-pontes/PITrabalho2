@@ -6,7 +6,7 @@ from Rotulacao import Rotulacao
 if __name__ == '__main__':
 	print("Processamento de Imagens.")
 
-	rotulacao = Rotulacao("img/lena-impar.png")
+	rotulacao = Rotulacao("img/quadrados.png")
 	rotulacao.carregarImagem()
 	op = -1
 
@@ -17,7 +17,6 @@ if __name__ == '__main__':
 		op = input(menuStr)
 		op = int(op)
 		if op == 1:
-			rotulacao.gerarLabels()
 			rotulacao.executar()
 			
 	print("Fim execução!!")
