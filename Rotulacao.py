@@ -65,38 +65,54 @@ class Rotulacao():
 			for j in range(n1):
 				rotulos[i][j] = str(m[i][j])
 
-		print(rotulos)
+		#print(rotulos)
+
+		'''
+		for i in range(len(m)):
+			for j in range(len(m[i])):
+				print(int(m[i][j]), end='')
+			print('')
+
+		print('')
+		'''
 
 		for i in range(m1):
 			for j in range(n1):
 				#p = self.matriz[i][j]
 				r = j-1
 				t = i-1
-				
-				if i == 0 and j == 0: #primeira linha, primeria coluna
+
+				#primeira linha, primeria coluna
+				if i == 0 and j == 0: 
 					if m[i][j] == 1:
 						rotulos[i][j] = labels[label]
 						label += 1
-				elif i == 0 and m[i][j] == 1: # primeira linha, preto
+				# primeira linha, preto
+				elif i == 0 and m[i][j] == 1: 
 					if m[i][r] == 1:
 						rotulos[i][j] = labels[label-1]
 					else:
 						rotulos[i][j] = labels[label]
 						label += 1
-				elif m[i][j] == 1: #linha > 0, preto
-					if j == 0:
-						if m[t][j] == 1:
-							rotulos[i][j] = labels[label-1]
-						else:
-							rotulos[i][j] = labels[label]
-							label += 1
-					elif m[t][j] == 1 or m[i][r] == 1:
-						rotulos[i][j] = labels[label-1]
+				# primeira coluna, preto
+				elif j == 0 and m[i][j] == 1: 
+					if m[t][j] == 1:
+						rotulos[i][j] = rotulos[t][j]
+					else:
+						rotulos[i][j] = labels[label]
+						label += 1
+				#linha > 0, preto
+				elif m[i][j] == 1: 
+					if m[t][j] == 1:
+						rotulos[i][j] = rotulos[t][j]
+					elif m[i][r] == 1:
+						rotulos[i][j] = rotulos[i][r]
 					else:
 						rotulos[i][j] = labels[label]
 						label += 1
 
-		print("Matriz Rotulada:")
+
+		print("\nMatriz Rotulada:")
 
 		for i in range(len(rotulos)):
 			for j in range(len(rotulos[i])):
@@ -106,7 +122,7 @@ class Rotulacao():
 					print("{}".format(rotulos[i][j]), end='')
 			print("")
 
-		#print(rotulos)
+		print(rotulos)
 		#imagem = Image.fromarray(rotulos)
 		#self.img.show()		
 		#imagem.show()
